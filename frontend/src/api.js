@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-// In production Vercel injects VITE_BACKEND_URL via the service binding.
-// Locally the Vite dev proxy handles /api → localhost:5000, so the
-// empty-string fallback keeps local dev working without any extra config.
+// VITE_BACKEND_URL is set in the Vercel frontend project's env vars.
+// Example: https://tricky-king-backend.vercel.app
+// Locally the Vite dev proxy handles /api → localhost:5000,
+// so BASE_URL stays empty and the proxy kicks in.
 const BASE_URL = import.meta.env.VITE_BACKEND_URL ?? ''
 
 const api = axios.create({ baseURL: `${BASE_URL}/api` })

@@ -8,7 +8,12 @@ import random
 import os
 
 app = Flask(__name__)
-CORS(app)
+
+# FRONTEND_URL is set in Vercel env vars to the deployed frontend domain.
+# Falls back to allow all origins for local dev.
+_frontend_url = os.environ.get('FRONTEND_URL', '*')
+CORS(app, origins=[_frontend_url] if _frontend_url != '*' else '*',
+     supports_credentials=True)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'trickyking_secret_2024')
 
