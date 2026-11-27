@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,10 +8,16 @@ import random
 import os
 
 app = Flask(__name__)
-CORS(app)   # allow all origins so the HTML works both ways
+CORS(app)
 
-app.config['SECRET_KEY'] = 'trickyking_secret_2024'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trickyking.db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'trickyking_secret_2024')
+
+# Use DATABASE_URL env var when set (production), otherwise local SQLite
+_db_url = os.environ.get('DATABASE_URL', '')
+if _db_url.startswith('postgres://'):
+    # SQLAlchemy requires postgresql:// scheme
+    _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = _db_url or 'sqlite:///trickyking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -282,15 +288,6 @@ def leaderboard():
         })
     board.sort(key=lambda x: (-x['wins'], -x['win_pct']))
     return jsonify({'leaderboard': board[:10]})
-
-
-# ─── Serve the frontend HTML ──────────────────────────────────────────────────
-
-HTML_PATH = os.path.join(os.path.dirname(__file__), '..', 'tricky_king.html')
-
-@app.route('/')
-def serve_frontend():
-    return send_file(os.path.abspath(HTML_PATH))
 
 
 # ─── Bootstrap ────────────────────────────────────────────────────────────────
