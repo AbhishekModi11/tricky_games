@@ -1,0 +1,554 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tricky King</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--border:#2a2a3e;--purple:#7c3aed;--purple2:#9d5cf6;--gold:#f59e0b;--gold2:#fbbf24;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--text:#e2e8f0;--text2:#94a3b8;--radius:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+h1,h2,h3{font-family:'Orbitron',monospace}
+button{cursor:pointer;font-family:inherit;border:none;outline:none;transition:all .2s}
+input{font-family:inherit;outline:none;transition:border .2s}
+.navbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-btn{background:transparent;color:var(--text2);padding:8px 14px;border-radius:8px;font-size:.88rem;font-weight:500}
+.nav-btn:hover,.nav-btn.active{background:var(--bg3);color:var(--text)}
+.nav-btn-p{background:var(--purple);color:#fff;padding:8px 16px;border-radius:8px;font-size:.88rem;font-weight:600}
+.nav-av{width:36px;height:36px;border-radius:50%;background:var(--bg3);border:2px solid var(--purple);display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 16px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.btn{padding:10px 24px;border-radius:8px;font-weight:600;font-size:.95rem;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-p{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff}
+.btn-p:hover{transform:translateY(-1px)}
+.btn-g{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1a00;font-weight:700}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-o:hover{border-color:var(--purple);color:var(--text)}
+.btn-d{background:var(--red);color:#fff}
+.btn-sm{padding:6px 14px;font-size:.85rem}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.fl{font-size:.85rem;color:var(--text2);font-weight:500}
+.fi{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:.95rem;width:100%}
+.fi:focus{border-color:var(--purple)}
+.alert{padding:10px 16px;border-radius:8px;font-size:.9rem;margin-bottom:16px}
+.ae{background:rgba(239,68,68,.1);border:1px solid var(--red);color:#fca5a5}
+.as{background:rgba(16,185,129,.1);border:1px solid var(--green);color:#6ee7b7}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700}
+.bw{background:rgba(16,185,129,.15);color:var(--green);border:1px solid var(--green)}
+.bl{background:rgba(239,68,68,.15);color:var(--red);border:1px solid var(--red)}
+.bd{background:rgba(59,130,246,.15);color:var(--blue);border:1px solid var(--blue)}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:16px;margin-bottom:24px}
+.st{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.sn{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;line-height:1;margin-bottom:4px}
+.sl{font-size:.75rem;color:var(--text2);text-transform:uppercase}
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at top,rgba(124,58,237,.15),var(--bg) 60%);padding:24px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:420px}
+.hero{text-align:center;padding:60px 20px 40px}
+.crown-anim{font-size:5rem;animation:float 3s ease-in-out infinite;display:block}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero-title{font-size:clamp(2rem,6vw,3.5rem);font-weight:900;background:linear-gradient(135deg,var(--gold),var(--purple2),var(--gold));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 4s linear infinite}
+@keyframes shine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.game-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:40px}
+.game-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px 24px;text-align:center;cursor:pointer;transition:all .3s}
+.game-card:hover{transform:translateY(-6px);border-color:var(--purple)}
+.hm-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:700px){.hm-wrap{grid-template-columns:1fr}}
+.hm-ascii{font-family:monospace;color:var(--gold);background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px;white-space:pre;line-height:1.4}
+.wd{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+.lb{width:38px;height:46px;border-bottom:3px solid var(--purple);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:700;color:var(--gold)}
+.kbd{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:16px}
+.kb{width:38px;height:38px;border-radius:8px;font-weight:700;font-size:.85rem;background:var(--bg3);border:1px solid var(--border);color:var(--text)}
+.kb:hover:not(:disabled){background:var(--purple);border-color:var(--purple)}
+.kb.ok{background:var(--green);border-color:var(--green);color:#fff}
+.kb.no{background:var(--bg);opacity:.35}
+.kb:disabled{cursor:not-allowed}
+.lives{display:flex;gap:5px;justify-content:center;font-size:1.4rem;margin-bottom:10px}
+.rps-choices{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:24px 0}
+.rps-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 28px;border-radius:16px;background:var(--bg3);border:2px solid var(--border);color:var(--text);font-size:2.8rem;transition:all .2s}
+.rps-btn:hover{border-color:var(--purple);transform:translateY(-4px)}
+.rps-btn span{font-size:.82rem;color:var(--text2);font-weight:600}
+.rps-rb{text-align:center;padding:28px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg3);margin-top:20px}
+.rps-rb.win{border-color:var(--green);background:rgba(16,185,129,.05)}
+.rps-rb.loss{border-color:var(--red);background:rgba(239,68,68,.05)}
+.rps-rb.draw{border-color:var(--blue);background:rgba(59,130,246,.05)}
+.rvs{display:flex;align-items:center;justify-content:center;gap:28px;margin:16px 0}
+.ph{display:flex;align-items:center;gap:24px;margin-bottom:28px;flex-wrap:wrap}
+.av-big{width:88px;height:88px;border-radius:50%;background:var(--bg3);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+.av-pick{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.av-opt{font-size:1.6rem;width:46px;height:46px;border-radius:10px;background:var(--bg3);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.av-opt:hover,.av-opt.sel{border-color:var(--gold);transform:scale(1.1)}
+.ht{width:100%;border-collapse:collapse}
+.ht th{text-align:left;padding:10px 14px;font-size:.72rem;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border)}
+.ht td{padding:11px 14px;font-size:.87rem;border-bottom:1px solid rgba(42,42,62,.5)}
+.ht tr:hover td{background:var(--bg3)}
+.ft{display:flex;gap:8px;margin-bottom:20px}
+.ftab{padding:7px 16px;border-radius:20px;font-size:.83rem;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer}
+.ftab.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.lbr{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:10px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border)}
+.lbr.t1{border-color:var(--gold);background:rgba(245,158,11,.05)}
+.lbr.t2{border-color:#94a3b8}
+.lbr.t3{border-color:#cd7c2f}
+.spin{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:sp .8s linear infinite;margin:60px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.gob{text-align:center;padding:22px;border-radius:var(--radius);margin-top:18px}
+.gob.win{background:rgba(16,185,129,.1);border:2px solid var(--green)}
+.gob.loss{background:rgba(239,68,68,.1);border:2px solid var(--red)}
+.wl{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.wletter{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid var(--red);padding:2px 8px;border-radius:6px;font-family:monospace;font-weight:bold}
+.pag{display:flex;gap:7px;justify-content:center;margin-top:18px}
+.pb{width:34px;height:34px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-weight:600;cursor:pointer}
+.pb.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.pb:disabled{opacity:.4;cursor:not-allowed}
+.ptitle{font-family:'Orbitron',monospace;font-size:1.8rem;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+const BASE = '/api';
+async function apiFetch(path, opts = {}) {
+  const token = localStorage.getItem('tk_token');
+  const res = await fetch(BASE + path, {
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+    ...opts
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+const PICS = [
+"  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========",
+"  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========",
+"  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========",
+"  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========",
+"  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========",
+"  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========",
+"  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========="
+];
+const ALPHA = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const RPS_C = [{id:0,emoji:'🪨',name:'Rock'},{id:1,emoji:'📄',name:'Paper'},{id:2,emoji:'✂️',name:'Scissors'}];
+const AVATARS = ['👑','🎯','🃏','🎲','🏆','🦁','🐉','⚡','🔥','💎','🧙','🦅'];
+const MEDALS = ['🥇','🥈','🥉'];
+const AuthCtx = React.createContext(null);
+function AuthProvider({ children }) {
+  const [user,setUser] = useState(null);
+  const [loading,setLoading] = useState(true);
+  useEffect(() => {
+    const t = localStorage.getItem('tk_token');
+    if(t) apiFetch('/me').then(r=>setUser(r.user)).catch(()=>localStorage.removeItem('tk_token')).finally(()=>setLoading(false));
+    else setLoading(false);
+  },[]);
+  const login = async (u,p) => { const r = await apiFetch('/login',{method:'POST',body:JSON.stringify({username:u,password:p})}); localStorage.setItem('tk_token',r.token); setUser(r.user); };
+  const register = async (u,e,p) => { const r = await apiFetch('/register',{method:'POST',body:JSON.stringify({username:u,email:e,password:p})}); localStorage.setItem('tk_token',r.token); setUser(r.user); };
+  const logout = () => { localStorage.removeItem('tk_token'); setUser(null); };
+  const refreshUser = async () => { const r = await apiFetch('/me'); setUser(r.user); };
+  return <AuthCtx.Provider value={{user,loading,login,register,logout,refreshUser}}>{children}</AuthCtx.Provider>;
+}
+const useAuth = () => React.useContext(AuthCtx);
+function useHash() {
+  const [hash,setHash] = useState(window.location.hash||'#/');
+  useEffect(()=>{ const h=()=>setHash(window.location.hash||'#/'); window.addEventListener('hashchange',h); return()=>window.removeEventListener('hashchange',h); },[]);
+  return hash;
+}
+function go(path){ window.location.hash='#'+path; }
+function Navbar({page}){
+  const {user,logout}=useAuth();
+  const a=p=>'nav-btn'+(page===p?' active':'');
+  return(
+    <nav className="navbar">
+      <div className="brand" onClick={()=>go('/')}>👑 Tricky King</div>
+      <div className="nav-links">
+        <button className={a('/')} onClick={()=>go('/')}>Home</button>
+        <button className={a('/leaderboard')} onClick={()=>go('/leaderboard')}>🏆 Board</button>
+        {user?<>
+          <button className={a('/hangman')} onClick={()=>go('/hangman')}>🎭 Hangman</button>
+          <button className={a('/rps')} onClick={()=>go('/rps')}>✊ RPS</button>
+          <button className={a('/history')} onClick={()=>go('/history')}>📜 History</button>
+          <div className="nav-av" onClick={()=>go('/profile')} title={user.username}>{user.avatar}</div>
+          <button className="nav-btn" onClick={()=>{logout();go('/');}}>Logout</button>
+        </>:<>
+          <button className="nav-btn" onClick={()=>go('/login')}>Login</button>
+          <button className="nav-btn-p" onClick={()=>go('/register')}>Play Free</button>
+        </>}
+      </div>
+    </nav>
+  );
+}
+function Home(){
+  const {user}=useAuth();
+  const play=p=>go(user?p:'/register');
+  return(
+    <div>
+      <div className="hero">
+        <span className="crown-anim">👑</span>
+        <h1 className="hero-title">TRICKY KING</h1>
+        <p style={{color:'var(--text2)',fontSize:'1.1rem',margin:'12px 0 32px'}}>Two games. One throne. Prove you are the trickiest of them all.</p>
+        {!user?<div style={{display:'flex',gap:12,justifyContent:'center'}}>
+          <button className="btn btn-p" onClick={()=>go('/register')}>Create Account</button>
+          <button className="btn btn-o" onClick={()=>go('/login')}>Sign In</button>
+        </div>:<p style={{color:'var(--gold)',fontFamily:'Orbitron,monospace',fontSize:'1rem'}}>Welcome back, {user.avatar} {user.username}! <span style={{color:'var(--text2)'}}>{user.stats.wins} wins and counting.</span></p>}
+      </div>
+      <div className="game-cards">
+        {[{e:'🎭',t:'Hangman',d:'Guess the hidden word letter by letter. 6 lives, 20 tricky words.',p:'/hangman',c:'var(--purple)'},{e:'✊',t:'Rock Paper Scissors',d:'Classic hand game vs the machine. Fast rounds, instant bragging rights.',p:'/rps',c:'var(--gold)'}].map(g=>(
+          <div key={g.p} className="game-card" onClick={()=>play(g.p)}>
+            <div style={{fontSize:'3.5rem',marginBottom:16}}>{g.e}</div>
+            <h2 style={{fontFamily:'Orbitron,monospace',fontSize:'1.2rem',marginBottom:8}}>{g.t}</h2>
+            <p style={{color:'var(--text2)',fontSize:'.9rem',lineHeight:1.5}}>{g.d}</p>
+            <button className="btn btn-p" style={{marginTop:20,background:`linear-gradient(135deg,${g.c},${g.c}cc)`}}>Play Now</button>
+          </div>
+        ))}
+      </div>
+      {user&&<div className="card" style={{marginTop:36,display:'flex',gap:24,flexWrap:'wrap',justifyContent:'space-around',alignItems:'center'}}>
+        {[{l:'TOTAL WINS',v:user.stats.wins,c:'var(--gold)'},{l:'WIN RATE',v:user.stats.win_pct+'%',c:'var(--purple2)'},{l:'GAMES PLAYED',v:user.stats.total,c:'var(--blue)'}].map(s=>(
+          <div key={s.l} style={{textAlign:'center'}}>
+            <div style={{fontSize:'.78rem',color:'var(--text2)',marginBottom:4}}>{s.l}</div>
+            <div style={{fontFamily:'Orbitron,monospace',fontSize:'2.2rem',color:s.c,fontWeight:900}}>{s.v}</div>
+          </div>
+        ))}
+        <button className="btn btn-o btn-sm" onClick={()=>go('/history')}>View Full History</button>
+      </div>}
+    </div>
+  );
+}
+function Login(){
+  const [f,setF]=useState({username:'',password:''});
+  const [err,setE]=useState('');
+  const [ld,setL]=useState(false);
+  const {login}=useAuth();
+  const submit=async e=>{e.preventDefault();setE('');setL(true);try{await login(f.username,f.password);go('/');}catch(ex){setE(ex.message);}finally{setL(false);}};
+  return(<div className="auth-wrap"><div className="auth-card">
+    <div style={{textAlign:'center',marginBottom:28}}><span style={{fontSize:'3rem'}}>👑</span><h2 style={{fontFamily:'Orbitron,monospace',fontSize:'1.4rem',marginTop:8}}>Tricky King</h2><p style={{color:'var(--text2)',fontSize:'.9rem',marginTop:4}}>Sign in to your throne</p></div>
+    {err&&<div className="alert ae">{err}</div>}
+    <form onSubmit={submit}>
+      <div className="fg"><label className="fl">Username</label><input className="fi" value={f.username} onChange={e=>setF({...f,username:e.target.value})} placeholder="your_username" required/></div>
+      <div className="fg"><label className="fl">Password</label><input className="fi" type="password" value={f.password} onChange={e=>setF({...f,password:e.target.value})} placeholder="password" required/></div>
+      <button className="btn btn-p" style={{width:'100%',padding:'12px'}} disabled={ld}>{ld?'Signing in...':'Sign In'}</button>
+    </form>
+    <p style={{textAlign:'center',marginTop:20,color:'var(--text2)',fontSize:'.9rem'}}>No account? <span style={{color:'var(--purple2)',cursor:'pointer'}} onClick={()=>go('/register')}>Register here</span></p>
+  </div></div>);
+}
+function Register(){
+  const [f,setF]=useState({username:'',email:'',password:''});
+  const [err,setE]=useState('');
+  const [ld,setL]=useState(false);
+  const {register}=useAuth();
+  const submit=async e=>{e.preventDefault();setE('');setL(true);try{await register(f.username,f.email,f.password);go('/');}catch(ex){setE(ex.message);}finally{setL(false);}};
+  return(<div className="auth-wrap"><div className="auth-card">
+    <div style={{textAlign:'center',marginBottom:28}}><span style={{fontSize:'3rem'}}>👑</span><h2 style={{fontFamily:'Orbitron,monospace',fontSize:'1.4rem',marginTop:8}}>Claim Your Throne</h2><p style={{color:'var(--text2)',fontSize:'.9rem',marginTop:4}}>Create your free account</p></div>
+    {err&&<div className="alert ae">{err}</div>}
+    <form onSubmit={submit}>
+      <div className="fg"><label className="fl">Username</label><input className="fi" value={f.username} onChange={e=>setF({...f,username:e.target.value})} placeholder="tricky_king" required/></div>
+      <div className="fg"><label className="fl">Email</label><input className="fi" type="email" value={f.email} onChange={e=>setF({...f,email:e.target.value})} placeholder="king@example.com" required/></div>
+      <div className="fg"><label className="fl">Password</label><input className="fi" type="password" value={f.password} onChange={e=>setF({...f,password:e.target.value})} placeholder="Min 4 characters" required/></div>
+      <button className="btn btn-g" style={{width:'100%',padding:'12px'}} disabled={ld}>{ld?'Creating...':'👑 Become a King'}</button>
+    </form>
+    <p style={{textAlign:'center',marginTop:20,color:'var(--text2)',fontSize:'.9rem'}}>Already have an account? <span style={{color:'var(--purple2)',cursor:'pointer'}} onClick={()=>go('/login')}>Sign in</span></p>
+  </div></div>);
+}
+function Profile(){
+  const {user,refreshUser,logout}=useAuth();
+  const [sel,setSel]=useState(user.avatar);
+  const [msg,setMsg]=useState('');
+  const [sav,setSav]=useState(false);
+  const save=async()=>{setSav(true);try{await apiFetch('/me/avatar',{method:'PUT',body:JSON.stringify({avatar:sel})});await refreshUser();setMsg('Avatar updated!');setTimeout(()=>setMsg(''),2000);}catch{setMsg('Failed to save');}finally{setSav(false);}};
+  const s=user.stats;
+  return(<div>
+    <h1 className="ptitle">My Profile</h1>
+    <p style={{color:'var(--text2)',marginBottom:28}}>Your stats, your avatar, your legacy.</p>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,alignItems:'start'}}>
+      <div className="card">
+        <div className="ph">
+          <div className="av-big">{sel}</div>
+          <div>
+            <div style={{fontFamily:'Orbitron,monospace',fontSize:'1.3rem',fontWeight:700}}>{user.username}</div>
+            <div style={{color:'var(--text2)',fontSize:'.85rem',marginTop:4}}>{user.email}</div>
+            <div style={{color:'var(--text2)',fontSize:'.72rem',marginTop:4}}>Member since {new Date(user.created_at).toLocaleDateString('en-US',{year:'numeric',month:'long'})}</div>
+          </div>
+        </div>
+        <p style={{color:'var(--text2)',fontSize:'.83rem',marginBottom:10}}>Choose your avatar:</p>
+        <div className="av-pick">{AVATARS.map(a=><div key={a} className={'av-opt'+(a===sel?' sel':'')} onClick={()=>setSel(a)}>{a}</div>)}</div>
+        {msg&&<div className={`alert ${msg.includes('Failed')?'ae':'as'}`} style={{marginTop:12}}>{msg}</div>}
+        <div style={{display:'flex',gap:10,marginTop:16}}>
+          <button className="btn btn-p btn-sm" onClick={save} disabled={sav||sel===user.avatar}>{sav?'Saving...':'Save Avatar'}</button>
+          <button className="btn btn-o btn-sm" onClick={()=>go('/history')}>📜 My History</button>
+        </div>
+      </div>
+      <div>
+        <div className="card" style={{marginBottom:20}}>
+          <h3 style={{fontFamily:'Orbitron,monospace',fontSize:'.88rem',color:'var(--text2)',marginBottom:16}}>OVERALL STATS</h3>
+          <div className="sg">
+            {[{v:s.wins,l:'Wins',c:'var(--gold)'},{v:s.losses,l:'Losses',c:'var(--red)'},{v:s.draws,l:'Draws',c:'var(--blue)'},{v:s.win_pct+'%',l:'Win Rate',c:'var(--purple2)'}].map(x=>(
+              <div key={x.l} className="st"><div className="sn" style={{color:x.c}}>{x.v}</div><div className="sl">{x.l}</div></div>
+            ))}
+          </div>
+          <div>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:'.73rem',color:'var(--text2)',marginBottom:6}}><span>Win Rate</span><span>{s.wins}/{s.total} games</span></div>
+            <div style={{background:'var(--bg)',borderRadius:8,height:10,overflow:'hidden'}}>
+              <div style={{height:'100%',width:`${s.win_pct}%`,background:'linear-gradient(90deg,var(--purple),var(--gold))',borderRadius:8,transition:'width 1s ease'}}/>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <h3 style={{fontFamily:'Orbitron,monospace',fontSize:'.88rem',color:'var(--text2)',marginBottom:16}}>BY GAME</h3>
+          <div style={{display:'flex',gap:14}}>
+            {[{e:'🎭',v:s.hangman_wins,l:'Hangman Wins',c:'var(--purple2)'},{e:'✊',v:s.rps_wins,l:'RPS Wins',c:'var(--gold)'}].map(x=>(
+              <div key={x.l} className="st" style={{flex:1,textAlign:'center'}}>
+                <div style={{fontSize:'2rem',marginBottom:4}}>{x.e}</div>
+                <div className="sn" style={{color:x.c,fontSize:'1.5rem'}}>{x.v}</div>
+                <div className="sl">{x.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style={{marginTop:24,textAlign:'right'}}>
+      <button className="btn btn-d btn-sm" onClick={()=>{logout();go('/');}}>Sign Out</button>
+    </div>
+  </div>);
+}
+function History(){
+  const [filter,setFilter]=useState('all');
+  const [page,setPage]=useState(1);
+  const [data,setData]=useState(null);
+  const [ld,setLd]=useState(false);
+  useEffect(()=>{
+    setLd(true);
+    const p=new URLSearchParams({page});if(filter!=='all')p.set('game',filter);
+    apiFetch('/history?'+p).then(setData).finally(()=>setLd(false));
+  },[filter,page]);
+  const chF=f=>{setFilter(f);setPage(1);};
+  const fmtDate=iso=>new Date(iso).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const badges={win:'bw',loss:'bl',draw:'bd'};
+  const icons={win:'✅',loss:'❌',draw:'🤝'};
+  return(<div>
+    <h1 className="ptitle">Game History</h1>
+    <p style={{color:'var(--text2)',marginBottom:28}}>Every battle recorded. Every win remembered.</p>
+    <div className="ft">
+      {[{k:'all',l:'All Games'},{k:'hangman',l:'🎭 Hangman'},{k:'rps',l:'✊ RPS'}].map(f=>(
+        <button key={f.k} className={'ftab'+(filter===f.k?' on':'')} onClick={()=>chF(f.k)}>{f.l}</button>
+      ))}
+    </div>
+    <div className="card" style={{padding:0,overflow:'hidden'}}>
+      {ld?<div className="spin"/>:!data||data.records.length===0?(
+        <div style={{textAlign:'center',padding:'48px',color:'var(--text2)'}}>
+          <div style={{fontSize:'3rem',marginBottom:12}}>📭</div>
+          <p>No games found. Go play something!</p>
+        </div>
+      ):(
+        <table className="ht">
+          <thead><tr><th>#</th><th>Game</th><th>Result</th><th>Detail</th><th>Date</th></tr></thead>
+          <tbody>
+            {data.records.map((r,i)=>(
+              <tr key={r.id}>
+                <td style={{color:'var(--text2)',fontFamily:'monospace'}}>{(page-1)*10+i+1}</td>
+                <td><span style={{marginRight:6}}>{r.game_type==='hangman'?'🎭':'✊'}</span>{r.game_type==='hangman'?'Hangman':'RPS'}</td>
+                <td><span className={'badge '+badges[r.result]}>{icons[r.result]} {r.result.toUpperCase()}</span></td>
+                <td style={{color:'var(--text2)',fontSize:'.83rem'}}>{r.detail}</td>
+                <td style={{color:'var(--text2)',fontSize:'.8rem',whiteSpace:'nowrap'}}>{fmtDate(r.played_at)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+    {data&&data.pages>1&&<div className="pag">
+      <button className="pb" disabled={page===1} onClick={()=>setPage(p=>p-1)}>&#8249;</button>
+      {Array.from({length:data.pages},(_,i)=>i+1).map(p=>(
+        <button key={p} className={'pb'+(p===page?' on':'')} onClick={()=>setPage(p)}>{p}</button>
+      ))}
+      <button className="pb" disabled={page===data.pages} onClick={()=>setPage(p=>p+1)}>&#8250;</button>
+    </div>}
+    {data&&<p style={{textAlign:'center',color:'var(--text2)',fontSize:'.83rem',marginTop:12}}>{data.total} game{data.total!==1?'s':''} total</p>}
+  </div>);
+}
+function HangmanGame(){
+  const {refreshUser}=useAuth();
+  const [word,setWord]=useState('');
+  const [guessed,setG]=useState([]);
+  const [lives,setLives]=useState(6);
+  const [over,setOver]=useState(false);
+  const [won,setWon]=useState(false);
+  const [ld,setLd]=useState(true);
+  const savedRef=useRef(false);
+  const startGame=useCallback(async()=>{
+    setLd(true);savedRef.current=false;
+    try{const r=await apiFetch('/hangman/new');setWord(r.word_id);setG([]);setLives(6);setOver(false);setWon(false);}
+    finally{setLd(false);}
+  },[]);
+  useEffect(()=>{startGame();},[startGame]);
+  const display=word?word.split('').map(l=>guessed.includes(l)?l:'_'):[];
+  const wrongLetters=guessed.filter(l=>word&&!word.includes(l));
+  const saveResult=useCallback(async(res,livesLeft)=>{
+    if(savedRef.current)return;savedRef.current=true;
+    try{await apiFetch('/hangman/result',{method:'POST',body:JSON.stringify({result:res,word,lives_left:livesLeft})});await refreshUser();}
+    catch{}
+  },[word,refreshUser]);
+  const guess=useCallback(letter=>{
+    if(over||guessed.includes(letter))return;
+    const ng=[...guessed,letter];setG(ng);
+    const nd=word.split('').map(l=>ng.includes(l)?l:'_');
+    const isW=!nd.includes('_');
+    let nl=lives;
+    if(!word.includes(letter)){nl=lives-1;setLives(nl);}
+    if(isW){setOver(true);setWon(true);saveResult('win',nl);}
+    else if(nl===0){setOver(true);setWon(false);saveResult('loss',0);}
+  },[over,guessed,word,lives,saveResult]);
+  useEffect(()=>{
+    const h=e=>{const k=e.key.toLowerCase();if(ALPHA.includes(k))guess(k);};
+    window.addEventListener('keydown',h);return()=>window.removeEventListener('keydown',h);
+  },[guess]);
+  if(ld)return <div className="spin"/>;
+  return(<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+      <div>
+        <h1 className="ptitle">🎭 Hangman</h1>
+        <p style={{color:'var(--text2)',fontSize:'.9rem'}}>Guess the word before it is too late</p>
+      </div>
+      <button className="btn btn-o btn-sm" onClick={startGame}>New Game</button>
+    </div>
+    <div className="hm-wrap">
+      <div>
+        <pre className="hm-ascii">{PICS[6-lives]}</pre>
+        <div className="lives" style={{marginTop:12}}>
+          {Array.from({length:6},(_,i)=><span key={i} style={{opacity:i<lives?1:.18}}>❤️</span>)}
+        </div>
+        <p style={{textAlign:'center',color:'var(--text2)',fontSize:'.83rem'}}>{lives} {lives===1?'life':'lives'} remaining</p>
+        {wrongLetters.length>0&&<div style={{marginTop:16}}>
+          <p style={{color:'var(--text2)',fontSize:'.78rem',marginBottom:6}}>Wrong guesses:</p>
+          <div className="wl">{wrongLetters.map(l=><span key={l} className="wletter">{l}</span>)}</div>
+        </div>}
+      </div>
+      <div>
+        <div className="wd">
+          {display.map((l,i)=><div key={i} className="lb">{l!=='_'?l.toUpperCase():''}</div>)}
+        </div>
+        <p style={{textAlign:'center',color:'var(--text2)',fontSize:'.78rem',marginBottom:16}}>{word.length} letters — click or use keyboard</p>
+        <div className="kbd">
+          {ALPHA.map(l=>{
+            const ok=guessed.includes(l)&&word.includes(l),no=guessed.includes(l)&&!word.includes(l);
+            return <button key={l} className={'kb'+(ok?' ok':no?' no':'')} onClick={()=>guess(l)} disabled={over||guessed.includes(l)}>{l.toUpperCase()}</button>;
+          })}
+        </div>
+        {over&&<div className={'gob '+(won?'win':'loss')}>
+          <div style={{fontSize:'2.8rem',marginBottom:8}}>{won?'🎉':'💀'}</div>
+          <div style={{fontFamily:'Orbitron,monospace',fontSize:'1.2rem',fontWeight:900}}>{won?'YOU WIN!':'GAME OVER'}</div>
+          {!won&&<p style={{color:'var(--text2)',marginTop:8,fontSize:'.88rem'}}>The word was <strong style={{color:'var(--gold)'}}>{word.toUpperCase()}</strong></p>}
+          <button className="btn btn-p" style={{marginTop:14}} onClick={startGame}>Play Again</button>
+        </div>}
+      </div>
+    </div>
+  </div>);
+}
+function RPSGame(){
+  const {refreshUser}=useAuth();
+  const [result,setResult]=useState(null);
+  const [uc,setUc]=useState(null);
+  const [cc,setCc]=useState(null);
+  const [ld,setLd]=useState(false);
+  const [streak,setStreak]=useState(0);
+  const [wins,setWins]=useState(0);
+  const [total,setTotal]=useState(0);
+  const RD={win:{label:'YOU WIN!',emoji:'🎉',color:'var(--green)'},loss:{label:'YOU LOSE!',emoji:'💔',color:'var(--red)'},draw:{label:"IT'S A DRAW!",emoji:'🤝',color:'var(--blue)'}};
+  const play=async id=>{
+    if(ld)return;setLd(true);setResult(null);setUc(id);setCc(null);
+    try{
+      const r=await apiFetch('/rps/play',{method:'POST',body:JSON.stringify({choice:id})});
+      setCc(r.computer_choice);setResult(r.result);setTotal(t=>t+1);
+      if(r.result==='win'){setStreak(s=>s+1);setWins(w=>w+1);}else setStreak(0);
+      await refreshUser();
+    }catch{setResult('error');}finally{setLd(false);}
+  };
+  const reset=()=>{setResult(null);setUc(null);setCc(null);};
+  const rd=result&&RD[result];
+  return(<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+      <div>
+        <h1 className="ptitle">✊ Rock Paper Scissors</h1>
+        <p style={{color:'var(--text2)',fontSize:'.9rem'}}>You vs The Machine</p>
+      </div>
+      {streak>1&&<div style={{background:'rgba(245,158,11,.1)',border:'1px solid var(--gold)',borderRadius:8,padding:'6px 14px',fontSize:'.83rem',color:'var(--gold)',fontWeight:700}}>🔥 {streak} win streak!</div>}
+    </div>
+    <div style={{display:'flex',gap:12,marginBottom:28,flexWrap:'wrap'}}>
+      {[{l:'Session Wins',v:wins,c:'var(--green)'},{l:'Session Games',v:total,c:'var(--purple2)'},{l:'Win Streak',v:streak,c:'var(--gold)'}].map(s=>(
+        <div key={s.l} className="st" style={{flex:'1 1 90px',textAlign:'center'}}>
+          <div className="sn" style={{color:s.c,fontSize:'1.7rem'}}>{s.v}</div><div className="sl">{s.l}</div>
+        </div>
+      ))}
+    </div>
+    {!result&&<div>
+      <p style={{textAlign:'center',color:'var(--text2)',marginBottom:16}}>{ld?'CPU is thinking...':'Pick your weapon:'}</p>
+      <div className="rps-choices">
+        {RPS_C.map(c=><button key={c.id} className="rps-btn" onClick={()=>play(c.id)} disabled={ld} style={{opacity:ld?.5:1}}>{c.emoji}<span>{c.name}</span></button>)}
+      </div>
+    </div>}
+    {result&&rd&&cc!==null&&<div className={'rps-rb '+result}>
+      <span style={{fontSize:'3.2rem',display:'block',marginBottom:8}}>{rd.emoji}</span>
+      <div style={{fontFamily:'Orbitron,monospace',fontSize:'1.4rem',fontWeight:900,color:rd.color}}>{rd.label}</div>
+      <div className="rvs" style={{marginTop:20,marginBottom:14}}>
+        <div style={{textAlign:'center'}}><span style={{fontSize:'3.5rem',display:'block'}}>{RPS_C[uc].emoji}</span><div style={{marginTop:6,fontWeight:600}}>{RPS_C[uc].name}</div><div style={{fontSize:'.72rem',color:'var(--text2)',textTransform:'uppercase',letterSpacing:1}}>You</div></div>
+        <div style={{fontFamily:'Orbitron,monospace',fontSize:'1.3rem',color:'var(--text2)'}}>VS</div>
+        <div style={{textAlign:'center'}}><span style={{fontSize:'3.5rem',display:'block'}}>{RPS_C[cc].emoji}</span><div style={{marginTop:6,fontWeight:600}}>{RPS_C[cc].name}</div><div style={{fontSize:'.72rem',color:'var(--text2)',textTransform:'uppercase',letterSpacing:1}}>CPU</div></div>
+      </div>
+      {result==='win'&&<p style={{color:'var(--green)',fontSize:'.88rem',marginBottom:12}}>{RPS_C[uc].name} beats {RPS_C[cc].name}!</p>}
+      {result==='loss'&&<p style={{color:'var(--red)',fontSize:'.88rem',marginBottom:12}}>{RPS_C[cc].name} beats {RPS_C[uc].name}!</p>}
+      {result==='draw'&&<p style={{color:'var(--blue)',fontSize:'.88rem',marginBottom:12}}>Same choice — no winner this time!</p>}
+      <button className="btn btn-p" onClick={reset}>Play Again</button>
+    </div>}
+    <div className="card" style={{marginTop:28,background:'var(--bg3)'}}>
+      <h3 style={{fontFamily:'Orbitron,monospace',fontSize:'.82rem',color:'var(--text2)',marginBottom:10}}>RULES</h3>
+      <div style={{display:'flex',gap:22,flexWrap:'wrap',fontSize:'.88rem',color:'var(--text2)'}}>
+        <span>🪨 Rock crushes ✂️ Scissors</span><span>📄 Paper covers 🪨 Rock</span><span>✂️ Scissors cut 📄 Paper</span>
+      </div>
+    </div>
+  </div>);
+}
+function Leaderboard(){
+  const [board,setBoard]=useState([]);
+  const [ld,setLd]=useState(true);
+  useEffect(()=>{apiFetch('/leaderboard').then(r=>setBoard(r.leaderboard)).finally(()=>setLd(false));},[]);
+  if(ld)return <div className="spin"/>;
+  return(<div>
+    <h1 className="ptitle">🏆 Leaderboard</h1>
+    <p style={{color:'var(--text2)',marginBottom:28}}>The greatest Tricky Kings, ranked by total wins.</p>
+    {board.length===0?<div className="card" style={{textAlign:'center',padding:'48px'}}><div style={{fontSize:'3rem',marginBottom:12}}>🕹️</div><p style={{color:'var(--text2)'}}>No players yet. Be the first king!</p></div>
+    :board.map((p,i)=>(
+      <div key={p.username} className={`lbr ${i===0?'t1':i===1?'t2':i===2?'t3':''}`}>
+        <div style={{fontFamily:'Orbitron,monospace',fontWeight:900,fontSize:'1.1rem',width:34}}>{i<3?MEDALS[i]:`#${i+1}`}</div>
+        <div style={{fontSize:'1.5rem'}}>{p.avatar}</div>
+        <div style={{flex:1,fontWeight:600}}>{p.username}</div>
+        <div style={{display:'flex',gap:22,alignItems:'center'}}>
+          {[{v:p.wins,l:'Wins',c:'var(--gold)'},{v:p.win_pct+'%',l:'Rate',c:'var(--purple2)'},{v:p.total,l:'Played',c:'var(--blue)'}].map(x=>(
+            <div key={x.l} style={{textAlign:'center'}}>
+              <div style={{fontFamily:'Orbitron,monospace',fontWeight:700,color:x.c}}>{x.v}</div>
+              <div style={{fontSize:'.68rem',color:'var(--text2)',textTransform:'uppercase'}}>{x.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>);
+}
+function App(){
+  const hash=useHash();
+  const {user,loading}=useAuth();
+  const page=hash.replace('#','')||'/';
+  if(loading)return <div className="spin" style={{marginTop:'30vh'}}/>;
+  const needAuth=['/hangman','/rps','/history','/profile'];
+  if(needAuth.includes(page)&&!user){go('/login');return null;}
+  const pages={'/':{C:Home},'/login':{C:Login},'/register':{C:Register},'/profile':{C:Profile},'/history':{C:History},'/hangman':{C:HangmanGame},'/rps':{C:RPSGame},'/leaderboard':{C:Leaderboard}};
+  const {C:Page}=pages[page]||{C:Home};
+  return(<div><Navbar page={page}/><div className="wrap"><Page/></div></div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<AuthProvider><App/></AuthProvider>);
+</script>
+</body>
+</html>
+
